@@ -19,31 +19,37 @@ optional functionality:
 		--get their health
 
 _G = GLOBAL
-
 _G.CHEATS_ENABLED = true--disable for push to live
 _G.require( 'debugkeys' )--disable for push to live
 
 Assets={
-	 Asset( "ANIM", "anim/health.zip"),
+	 --Asset( "ANIM", "anim/health.zip"), 
+	 --it breaks your normal hpbar atm 
 }
-local activebadges=0;
+
+-- pulls setting for hod position from modinfo
 local hudposition= GetModConfigData("position")
 
---print all userids and health%
-for _,v in ipairs(_G.AllPlayers) do print(v.userid, v.components.health:GetPercent()) end  
-
----[[
- -- does something important maybe, we figure it out
-local function AddPlayersPostInit(fn)
-	for i,v in ipairs(_G.DST_CHARACTERLIST) do
-		DST_CHARACTERLIST + ROG_CHARACTERLIST
-		AddPrefabPostInit(v,fn)
-	end
-	for i,v in ipairs(_G.MODCHARACTERLIST) do
-		AddPrefabPostInit(v,fn)
-	end
-
+--returns the number of players on the server
+local function countplayers(inst)
+	local activeplayers=0
+	for _,v in ipairs(_G.AllPlayers) do
+		print(v.userid, v.components.health:GetPercent()) 
+		activeplayers=(activeplayers+1)
+	end  
+	return activeplayers
 end
 
---]]
+-- adds function fn to all characters, plus modded chars if exist 
+local function AddPlayersPostInit(fn)
+	for i,v in ipairs(_G.DST_CHARACTERLIST) do--DST_CHARACTERLIST + ROG_CHARACTERLIST
+		AddPrefabPostInit(v,fn)
+	end
+	if(_G.MODCHARACTERLIST)
+		for i,v in ipairs(_G.MODCHARACTERLIST) do-- modded char list
+			AddPrefabPostInit(v,fn)
+		end
+	end
+end
+
 
