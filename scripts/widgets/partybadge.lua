@@ -1,36 +1,38 @@
 local Badge = require "widgets/badge"
 local UIAnim = require "widgets/uianim"
-local Text = require "widgets/text"
 
-return PartyBadge = Class(Badge, function(self, owner)
-	Badge._ctor(self, "badge", owner)
-	
-	self.partyarrow = self.underNumber:AddChild(UIAnim())
-	self.partyarrow:GetAnimState():SetBank("sanity_arrow")
-	self.partyarrow:GetAnimState():SetBuild("sanity_arrow")
-	self.partyarrow:GetAnimState():PlayAnimation("neutral")
-	self.partyarrow:SetClickable(false)
-	self.arrowdir = nil
-	self:StartUpdating()
-
-	self.text = self:AddChild(Text(NUMBERFONT, 40 / self.base_scale))
-end)
-
-function PartyBadge:Update(val)
-	self.text:SetString(val)
+local function OnIsFullMoon(inst, isfullmoon)
+    inst.widget.isfullmoon = isfullmoon
+    inst.widget:UpdateArrow()
 end
 
-function PartyBadge:OnUpdate(dt)
-	local down = self.owner ~= nil and
-        self.owner:HasTag("sleeping") and
-        self.owner.replica.hunger ~= nil and
-        self.owner.replica.hunger:GetPercent() > 0
+local PartyBadge = Class(Badge, function(self, owner)
+    Badge._ctor(self, "health", owner)
 
-	local anim = down and "arrow_loop_decrease" or "neutral"
-	if self.arrowdir ~= anim then
-		self.arrowdir = anim
-		self.partyarrow:GetAnimState():PlayAnimation(anim, true)
-	end
+    self.sanityarrow = self.underNumber:AddChild(UIAnim())
+    self.sanityarrow:GetAnimState():SetBank("sanity_arrow")
+    self.sanityarrow:GetAnimState():SetBuild("sanity_arrow")
+    self.sanityarrow:SetClickable(false)
+
+    self.inst:WatchWorldState("isfullmoon", OnIsFullMoon)
+    self.isfullmoon = TheWorld.state.isfullmoon
+    self.val = 100
+    self.arrowdir = nil
+    self:UpdateArrow()
+end)
+
+function PartyBadge:UpdateArrow()
+    local anim = self.isfullmoon and self.val > 0 and "arrow_loop_decrease_most" or "neutral"
+    if self.arrowdir ~= anim then
+        self.arrowdir = anim
+        self.sanityarrow:GetAnimState():PlayAnimation(anim, true)
+    end
+end
+
+function PartyBadge:SetPercent(val, max)
+    Badge.SetPercent(self, val, max)
+    self.val = val
+    self:UpdateArrow()
 end
 
 return PartyBadge

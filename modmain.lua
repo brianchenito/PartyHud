@@ -30,11 +30,12 @@ Assets={
 -- pulls setting for hod position from modinfo
 local hudposition= GetModConfigData("position")
 
+local badge= _G.require "widgets/partybadge"
 --returns the number of players on the server
 local function countplayers(inst)
 	local activeplayers=0
 	for _,v in ipairs(_G.AllPlayers) do
-		print(v.userid, v.components.health:GetPercent()) 
+		--print(v.userid, v.components.health:GetPercent()) 
 		activeplayers=(activeplayers+1)
 	end  
 	return activeplayers
@@ -42,14 +43,29 @@ end
 
 -- adds function fn to all characters, plus modded chars if exist 
 local function AddPlayersPostInit(fn)
-	for i,v in ipairs(_G.DST_CHARACTERLIST) do--DST_CHARACTERLIST + ROG_CHARACTERLIST
+	for i,v in ipairs(_G.DST_CHARACTERLIST) do -- DST_CHARACTERLIST + ROG_CHARACTERLIST
 		AddPrefabPostInit(v,fn)
 	end
-	if(_G.MODCHARACTERLIST)
-		for i,v in ipairs(_G.MODCHARACTERLIST) do-- modded char list
-			AddPrefabPostInit(v,fn)
+		if(_G.MODCHARACTERLIST) then
+			for i,v in ipairs(_G.MODCHARACTERLIST) do-- modded char list
+				AddPrefabPostInit(v,fn)
+			end
 		end
-	end
 end
+
+
+
+AddClassPostConstruct("widgets/statusdisplays", function(self)
+	self.hp=self:AddChild(badge(self,self.owner))
+	self.hp:SetPosition(0,-200,0)
+end)
+
+
+
+
+
+
+
+
 
 
