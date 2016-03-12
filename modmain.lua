@@ -22,15 +22,16 @@ _G = GLOBAL
 _G.CHEATS_ENABLED = true--disable for push to live
 _G.require( 'debugkeys' )--disable for push to live
 
-Assets={
-	 --Asset( "ANIM", "anim/health.zip"), 
-	 --it breaks your normal hpbar atm 
-}
-
--- pulls setting for hod position from modinfo
+-- pulls setting for hud position from modinfo
 local hudposition= GetModConfigData("position")
 
+--pulls setting for badge spacing from modinfo
+local spacing=GetModConfigData("spacing")
+
+--imports partybadge
 local badge= _G.require "widgets/partybadge"
+
+--[[
 --returns the number of players on the server
 local function countplayers(inst)
 	local activeplayers=0
@@ -41,23 +42,21 @@ local function countplayers(inst)
 	return activeplayers
 end
 
--- adds function fn to all characters, plus modded chars if exist 
-local function AddPlayersPostInit(fn)
-	for i,v in ipairs(_G.DST_CHARACTERLIST) do -- DST_CHARACTERLIST + ROG_CHARACTERLIST
-		AddPrefabPostInit(v,fn)
-	end
-		if(_G.MODCHARACTERLIST) then
-			for i,v in ipairs(_G.MODCHARACTERLIST) do-- modded char list
-				AddPrefabPostInit(v,fn)
-			end
-		end
+
+local function UpdateBadge(inst)
+
 end
-
-
-
+--]]
+--constructs badges
 AddClassPostConstruct("widgets/statusdisplays", function(self)
-	self.hp=self:AddChild(badge(self,self.owner))
-	self.hp:SetPosition(0,-200,0)
+	local i=0
+	self.badgearray= {}
+	for _,v in ipairs(_G.AllPlayers) do
+		
+		self.badgearray[i]=self:AddChild(badge(self,self.owner))
+		self.badgearray[i]:SetPosition(-spacing-spacing*i,100,0)
+		i=(i+1)
+	end
 end)
 
 

@@ -25,11 +25,22 @@ configuration_options=
 	{
 	name="position",
 	label="Hud Placement",
-	hover="place the hud on the top or bottom of the screen",
+	hover="Place the hud on the top or bottom of the screen:",
 	options={
 			{description = "Top", data = 0},
 			{description = "Bottom", data = 1},
 			},
 	default = 0,
+	},
+	{
+	name="spacing",
+	label="Badge Spacing",
+	hover="Set distance between Health indicators:",
+	options={
+		{description = "Compact", data = 100},
+		{description = "Normal", data = 150},
+		{description = "Wide", data = 200},
+	},
+	default=150,
 	},
 }
