@@ -8,13 +8,13 @@ end
 
 local PartyBadge = Class(Badge, function(self, owner)
     Badge._ctor(self, "health", owner)
-    -- construct hp up/down arrow
+    -- instance hp up/down arrow
     self.sanityarrow = self.underNumber:AddChild(UIAnim())
     self.sanityarrow:GetAnimState():SetBank("sanity_arrow")
     self.sanityarrow:GetAnimState():SetBuild("sanity_arrow")
     self.sanityarrow:GetAnimState():PlayAnimation("neutral")
     self.sanityarrow:SetClickable(false)
-    -- construct the health debuff coverup
+    -- instance the health debuff coverup
     self.topperanim = self.underNumber:AddChild(UIAnim())
     self.topperanim:GetAnimState():SetBank("effigy_topper")
     self.topperanim:GetAnimState():SetBuild("effigy_topper")
@@ -27,14 +27,26 @@ local PartyBadge = Class(Badge, function(self, owner)
     self.val = 100
     self.arrowdir = nil
     self:UpdateArrow()
-    self:SetPercent(.5,100,.2)
+    	
 end)
--- updates hud, val= current hp percent(undebuffed), max = max(undebuffed) hp, penalty is current hp penalty percent
+-- updates hud, val= current hp percent(undebuffed), max = max hp, penalty =current hp penalty percent
 function PartyBadge:SetPercent(val, max, penaltypercent)
     Badge.SetPercent(self, val, max)
-
     penaltypercent = penaltypercent or 0
     self.topperanim:GetAnimState():SetPercent("anim", penaltypercent)
+end
+-- hide entire badge
+function PartyBadge:HideBadge()
+	self.anim:Hide()
+	self.sanityarrow:Hide()
+	self.topperanim:Hide()
+end
+--show entire badge
+function PartyBadge:ShowBadge()
+	self.anim:Show()
+	self.sanityarrow:Show()
+	self.topperanim:Show()
+	self.anim:GetAnimState():Hide("frame")
 end
 
 

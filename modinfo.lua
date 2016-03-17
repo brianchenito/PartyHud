@@ -37,10 +37,11 @@ configuration_options=
 	label="Badge Spacing",
 	hover="Set distance between Health indicators:",
 	options={
-		{description = "Compact", data = 100},
-		{description = "Normal", data = 150},
-		{description = "Wide", data = 200},
+			{description = "Compact(50)", data = 70},
+			{description = "Normal(100)", data = 100},
+			{description = "Wide(150)", data = 150},
+		},
+	default=100,
 	},
-	default=150,
-	},
+
 }

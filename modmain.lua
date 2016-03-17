@@ -1,22 +1,3 @@
---[[ 
-todo:
-phase 1:
-	-write class for badges, instance on hud
-	-detect player login/ logout
-		-update badges to reflect active players(do on login/logout event)
-	-get all active players
-		-for each active player, get and print health(do on tick)
-phase 2: stuff
-
-optional functionality:
-	- on hover over badge, display name, numerical health, sanity, food, highlight badge
-	- detect damage to player, display fighting indicator over badge
-	-detect low health,  display health warning over badge(maybe show red glow around badge?)
-	-allow hud positioning options
---]]
---on login or login event or logout event
-	--get players
-		--get their health
 
 _G = GLOBAL
 _G.CHEATS_ENABLED = true--disable for push to live
@@ -29,7 +10,7 @@ local hudposition= GetModConfigData("position")
 local spacing=GetModConfigData("spacing")
 
 --imports partybadge
-local badge= _G.require "widgets/partybadge"
+local custombadge= _G.require "widgets/partybadge"
 
 --[[
 --returns the number of players on the server
@@ -43,21 +24,21 @@ local function countplayers(inst)
 end
 
 
-local function UpdateBadge(inst)
-
-end
 --]]
---constructs badges
+
+--constructs badges, and hides them
 AddClassPostConstruct("widgets/statusdisplays", function(self)
-	local i=0
 	self.badgearray= {}
-	for _,v in ipairs(_G.AllPlayers) do
+	for i=0,5 do -- make 6 of these
+		self.badgearray[i]=self:AddChild(custombadge(self,self.owner))
+		self.badgearray[i]:SetPosition((-100-spacing*i),100,0)
+		--self.badgearray[i]:HideBadge()
+		self.badgearray[i]:SetPercent(0.5,100,0.2)
 		
-		self.badgearray[i]=self:AddChild(badge(self,self.owner))
-		self.badgearray[i]:SetPosition(-spacing-spacing*i,100,0)
-		i=(i+1)
 	end
+	
 end)
+
 
 
 
