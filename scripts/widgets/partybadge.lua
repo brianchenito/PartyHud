@@ -1,6 +1,8 @@
 local Badge = require "widgets/badge"
 local UIAnim = require "widgets/uianim"
 local Text = require "widgets/text"
+local Image = require "widgets/image"
+
 local function OnEffigyDeactivated(inst)
     if inst.AnimState:IsCurrentAnimation("deactivate") then
         inst.widget:Hide()
@@ -24,18 +26,18 @@ local PartyBadge = Class(Badge, function(self, owner)
     self.sanityarrow:GetAnimState():PlayAnimation("neutral")
     self.sanityarrow:SetClickable(false)
 
-
     --Hide the original frame since it is now overlapped by the topperanim
     self.anim:GetAnimState():Hide("frame")
 
-    self.val = 100
-    self.arrowdir = nil
-    --self:UpdateArrow()
-    	
+    self.dead = self:AddChild(Image("images/hud.xml", "tab_arcane.tex"))
+    self.dead:SetPosition(-10, 0, 0)	
+    self.dead:SetScale(0.7)
+
     self.name = self:AddChild(Text(BODYTEXTFONT, 20))
     self.name:SetHAlign(ANCHOR_MIDDLE)
     self.name:SetPosition(0, -40, 0)
     self.name:SetString("--")
+
 
 end)
 
@@ -56,6 +58,7 @@ function PartyBadge:HideBadge()
 	self.sanityarrow:Hide()
 	self.topperanim:Hide()
     self.name:Hide()
+    self.dead:Hide()
 end
 
 --show entire badge
@@ -65,20 +68,15 @@ function PartyBadge:ShowBadge()
 	self.topperanim:Show()
     self.name:Show()
 	self.anim:GetAnimState():Hide("frame")
+    self.dead:Hide()
 end
 
-
-function PartyBadge:UpdateArrow()
-    local down= self.owner~=nil
-    	and false
-    local up= self.owner~=nil
-    	and false
-    
-    local anim = down and "arrow_loop_decrease_most" or (up and "arrow_loop_increase" or "neutral")
-    if self.arrowdir ~= anim then
-        self.arrowdir = anim
-        self.sanityarrow:GetAnimState():PlayAnimation(anim, true)
-    end
+function PartyBadge:ShowDead()
+    self.anim:Hide()
+    self.sanityarrow:Hide()
+    self.topperanim:Hide()
+    self.name:Show()
+    self.dead:Show()
 end
 
 

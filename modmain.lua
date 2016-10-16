@@ -32,9 +32,12 @@ local function onstatusdisplaysconstruct(self)
 			local isdead = (v.customisdead and v.customisdead:value() or false)
 
 			print("Player "..tostring(i).." Should be "..tostring(isdead).." bruh")
-			if isdead~=true then 
+			if isdead==true then 
+				self.badgearray[i]:ShowDead()
+			else
 				self.badgearray[i]:ShowBadge()
 			end
+
 		end
 	end
 
