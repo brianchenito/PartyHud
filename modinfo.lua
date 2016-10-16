@@ -1,7 +1,7 @@
 name="PartyHUD"
 description= "A DST mod that displays the health status of other players."
 author= "Brian Chen (Chenito)"
-version="0.1"
+version="0.11"
 forumthread=""
 
 api_version = 10-- the current version of the modding api
@@ -23,25 +23,14 @@ server_filter_tags = {"party hud"}
 configuration_options=
 {
 	{
-	name="position",
-	label="Hud Placement",
-	hover="Place the hud on the top or bottom of the screen:",
+	name="scale",
+	label="Badge Scale",
+	hover="Set the size of the indicators:",
 	options={
-			{description = "Top", data = 0},
-			{description = "Bottom", data = 1},
-			},
-	default = 0,
-	},
-	{
-	name="spacing",
-	label="Badge Spacing",
-	hover="Set distance between Health indicators:",
-	options={
-			{description = "Compact(50)", data = 70},
-			{description = "Normal(100)", data = 100},
-			{description = "Wide(150)", data = 150},
+			{description = "Compact", data = 0.8},
+			{description = "Normal", data = 1},
+			{description = "Large", data = 1.5},
 		},
-	default=100,
+	default=1,
 	},
-
 }
