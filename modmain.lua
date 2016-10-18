@@ -1,6 +1,6 @@
 _G = GLOBAL
-_G.CHEATS_ENABLED = true--disable for push to live
-_G.require( 'debugkeys' )--disable for push to live
+--_G.CHEATS_ENABLED = true--disable for push to live
+--_G.require( 'debugkeys' )--disable for push to live
 
 --print(AllPlayers[1]:HasTag("playerghost"))
 
@@ -72,7 +72,10 @@ local function onhealthdelta(inst, data)
 	inst.customhpbadgemax:set(inst.components.health:GetMaxWithPenalty())
 	--get debuff of char health
 	inst.customhpbadgedebuff:set(inst.components.health:GetPenaltyPercent())
-
+	-- forcible is dead check
+	if(inst:HasTag('playerghost')) then
+	inst.customisdead:set(true)
+	end
 end
 
 local function ondeath(inst,data)

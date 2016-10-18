@@ -1,7 +1,7 @@
 name="PartyHUD"
 description= "A DST mod that displays the health status of other players."
 author= "Brian Chen (Chenito)"
-version="0.11"
+version="0.12"
 forumthread=""
 
 api_version = 10-- the current version of the modding api
