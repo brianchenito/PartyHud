@@ -100,7 +100,10 @@ end
 local function ondeathdeltadirty(inst)
 	GLOBAL.ThePlayer.UpdateBadgeVisibility()
 end
-
+--when someone leaves the server, it triggers badge visibility toggle
+local function ondiconnectdirty( inst )
+	GLOBAL.ThePlayer.UpdateBadgeVisibility()
+end
 
 local function customhppostinit(inst)
 	-- Net variable that stores between 0-255; more info in netvars.lua
@@ -110,9 +113,11 @@ local function customhppostinit(inst)
 	--inst.customhpbadgeoldpercent = GLOBAL.net_byte(inst.GUID, "customhpbadge.oldpercent", "customhpbadgedirty")
 	inst.customhpbadgemax = GLOBAL.net_byte(inst.GUID,"customhpbadge.max","customhpbadgedirty")
 	inst.customhpbadgedebuff = GLOBAL.net_byte(inst.GUID,"customhpbadge.debuff","customhpbadgedirty")
-
 	inst.customisdead=GLOBAL.net_bool(inst.GUID,"customhpbadge.isdead","ondeathdeltadirty")
 
+
+
+	inst:ListenForEvent("playerexited",ondiconnectdirty, GLOBAL.TheWorld)
 	-- Server (master simulation) reacts to health and changes the net variable
 	if GLOBAL.TheWorld.ismastersim then
 		inst:ListenForEvent("healthdelta", onhealthdelta)
