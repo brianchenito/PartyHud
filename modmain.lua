@@ -9,24 +9,37 @@ _G = GLOBAL
 
 
 -- pulls setting for hud configs from modinfo
-local scalar=GetModConfigData("scale")
+local layout=GetModConfigData("layout")
 --imports partybadge
 local custombadge= _G.require "widgets/partybadge"
 
+local xpos=-650
+local ypos=100 
+
+--local scale=_G
 --constructor for badge array
 local function onstatusdisplaysconstruct(self)
+
 	self.badgearray = {}
 		--instance badges for players. 
 	for i = 1, GLOBAL.TheNet:GetDefaultMaxPlayers(), 1 do
 		self.badgearray[i]=self:AddChild(custombadge(self,self.owner))
-		self.badgearray[i]:SetPosition(0,(-40*scalar-83*i*scalar),0)
-		self.badgearray[i]:SetScale(scalar)
+		
+		if layout==0 then
+			--complicated spagetti for a  properly aligned 2x3 grid
+			self.badgearray[i]:SetPosition(xpos+(35*(-i-i%2)) ,ypos-110+(110*(-i%2)),0)
+
+		else
+			--top centered
+			self.badgearray[i]:SetPosition(xpos+(-70*i),ypos,0)
+		end
 	end
 
 	self.owner.UpdateBadgeVisibility = function()
-
 		for i = 1, GLOBAL.TheNet:GetDefaultMaxPlayers(), 1 do
 			self.badgearray[i]:HideBadge()
+			--self.badgearray[i]:ShowBadge()
+
 		end
 		for i, v in ipairs(_G.AllPlayers) do
 			local isdead = (v.customisdead and v.customisdead:value() or false)
@@ -64,9 +77,7 @@ AddClassPostConstruct("widgets/statusdisplays", onstatusdisplaysconstruct)
 --server functions
 local function onhealthdelta(inst, data)
 	--get health of char
-	--local oldpercent = data.oldpercent and data.old or 0
 	local setpercent = data.newpercent and data.newpercent or 0
-	--inst.customhpbadgeoldpercent:set(math.floor(oldpercent * 100+0.5))--potatoey rounding to push shorts
 	inst.customhpbadgepercent:set(math.floor(setpercent * 100+0.5))--potatoey rounding to push shorts
 	--get max health of char
 	inst.customhpbadgemax:set(inst.components.health:GetMaxWithPenalty())
@@ -79,12 +90,10 @@ local function onhealthdelta(inst, data)
 end
 
 local function ondeath(inst,data)
-	print("fukin dyin hear")
 	inst.customisdead:set(true)
 end
 
 local function onrespawn(inst,data)
-	print("fukin livin hear")
 	inst.customisdead:set(false)
 end
 
@@ -109,8 +118,8 @@ local function customhppostinit(inst)
 	-- Net variable that stores between 0-255; more info in netvars.lua
 	-- GUID of entity, unique identifier of variable, event pushed when variable changes
 	-- Event is pushed to the entity it refers to, server and client side wise
+
 	inst.customhpbadgepercent = GLOBAL.net_byte(inst.GUID, "customhpbadge.percent", "customhpbadgedirty")
-	--inst.customhpbadgeoldpercent = GLOBAL.net_byte(inst.GUID, "customhpbadge.oldpercent", "customhpbadgedirty")
 	inst.customhpbadgemax = GLOBAL.net_byte(inst.GUID,"customhpbadge.max","customhpbadgedirty")
 	inst.customhpbadgedebuff = GLOBAL.net_byte(inst.GUID,"customhpbadge.debuff","customhpbadgedirty")
 	inst.customisdead=GLOBAL.net_bool(inst.GUID,"customhpbadge.isdead","ondeathdeltadirty")

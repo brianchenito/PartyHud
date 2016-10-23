@@ -35,7 +35,7 @@ local PartyBadge = Class(Badge, function(self, owner)
 
     self.name = self:AddChild(Text(BODYTEXTFONT, 20))
     self.name:SetHAlign(ANCHOR_MIDDLE)
-    self.name:SetPosition(0, -40, 0)
+    self.name:SetPosition(0, 40, 0)
     self.name:SetString("--")
 
 
@@ -59,10 +59,12 @@ function PartyBadge:HideBadge()
 	self.topperanim:Hide()
     self.name:Hide()
     self.dead:Hide()
+    self:Hide()
 end
 
 --show entire badge
 function PartyBadge:ShowBadge()
+    self:Show()
 	self.anim:Show()
 	self.sanityarrow:Show()
 	self.topperanim:Show()
@@ -72,6 +74,7 @@ function PartyBadge:ShowBadge()
 end
 
 function PartyBadge:ShowDead()
+    self:Show()
     self.anim:Hide()
     self.sanityarrow:Hide()
     self.topperanim:Hide()
