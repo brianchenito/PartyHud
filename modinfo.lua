@@ -1,7 +1,7 @@
 name="PartyHUD"
-description= "A DST mod that displays the health status of other players."
+description= "A DST mod that displays the health status of other players. Set Position and layout in config."
 author= "Brian Chen (Chenito)"
-version="0.97"
+version="0.985"
 forumthread=""
 
 api_version = 10-- the current version of the modding api
@@ -31,5 +31,16 @@ configuration_options=
 			{description = "Horizontal", data = 1}
 		},
 	default=1,
+	},
+		{
+	name="position",
+	label="HUD Position",
+	hover="Choose the placement of the health indicators. Minimap settings are compatible with Squeek's minimap HUD",
+	options={
+			{description = "Minimap", data = 0},
+			{description = "Minimap XL", data = 1},
+			{description = "Standard", data = 2}
+		},
+	default=0,
 	},
 }

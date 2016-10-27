@@ -10,11 +10,24 @@ _G = GLOBAL
 
 -- pulls setting for hud configs from modinfo
 local layout=GetModConfigData("layout")
---imports partybadge
-local custombadge= _G.require "widgets/partybadge"
+local positional=GetModConfigData("position")
 
-local xpos=-650
-local ypos=100 
+--imports partybadge
+local phud_custombadge= _G.require "widgets/partybadge"
+local phud_xpos=0
+local phud_ypos=0
+
+if positional==0 then -- standard with minimap
+	phud_xpos= (-100)
+	phud_ypos= (-70)
+elseif positional==1 then --extra large minimap
+	phud_xpos= (-650) 
+	phud_ypos= (50)
+else--no minimap
+	phud_xpos= (-100) 
+	phud_ypos= (120)
+end
+
 
 --local scale=_G
 --constructor for badge array
@@ -23,15 +36,17 @@ local function onstatusdisplaysconstruct(self)
 	self.badgearray = {}
 		--instance badges for players. 
 	for i = 1, GLOBAL.TheNet:GetDefaultMaxPlayers(), 1 do
-		self.badgearray[i]=self:AddChild(custombadge(self,self.owner))
+		self.badgearray[i]=self:AddChild(phud_custombadge(self,self.owner))
 		
 		if layout==0 then
 			--complicated spagetti for a  properly aligned 2x3 grid
-			self.badgearray[i]:SetPosition(xpos+(35*(-i-i%2)) ,ypos-110+(110*(-i%2)),0)
+			self.badgearray[i]:SetPosition(phud_xpos+(35*(-i-i%2)) ,phud_ypos-110+(110*(-i%2)),0)
 
 		else
 			--top centered
-			self.badgearray[i]:SetPosition(xpos+(-70*i),ypos,0)
+			self.badgearray[i]:SetPosition(phud_xpos+(-70*i),phud_ypos,0)
+
+
 		end
 	end
 
@@ -89,6 +104,10 @@ local function onhealthdelta(inst, data)
 	end
 end
 
+local function ondisconnect(inst,data)
+	inst.dctoggle:set(true)
+end
+
 local function ondeath(inst,data)
 	inst.customisdead:set(true)
 end
@@ -123,18 +142,18 @@ local function customhppostinit(inst)
 	inst.customhpbadgemax = GLOBAL.net_byte(inst.GUID,"customhpbadge.max","customhpbadgedirty")
 	inst.customhpbadgedebuff = GLOBAL.net_byte(inst.GUID,"customhpbadge.debuff","customhpbadgedirty")
 	inst.customisdead=GLOBAL.net_bool(inst.GUID,"customhpbadge.isdead","ondeathdeltadirty")
+	inst.customexitdelta=GLOBAL.net_bool(inst.GUID,"customhpbadge.dctoggle","ondiconnectdirty")
 
 
-
-	inst:ListenForEvent("playerexited",ondiconnectdirty, GLOBAL.TheWorld)
 	-- Server (master simulation) reacts to health and changes the net variable
 	if GLOBAL.TheWorld.ismastersim then
 		inst:ListenForEvent("healthdelta", onhealthdelta)
 		inst:ListenForEvent("respawnfromghost", onrespawn)
 		inst:ListenForEvent("death", ondeath)
-		
-		-- Hack to trigger deltas for when somebody joins for first time, to update their badges
+		inst:ListenForEvent("playerexited",ondisconnect, GLOBAL.TheWorld)
+
 		inst.components.health:DoDelta(0)
+
 	end
 
 	-- Dedicated server is dummy player, only players hosting or clients have the badges
@@ -142,6 +161,7 @@ local function customhppostinit(inst)
 	if not GLOBAL.TheNet:IsDedicated() then
 		inst:ListenForEvent("customhpbadgedirty", oncustomhpbadgedirty)
 		inst:ListenForEvent("ondeathdeltadirty", ondeathdeltadirty)
+		inst:ListenForEvent("ondiconnectdirty",ondiconnectdirty)
 	end
 end
 -- Apply function on player entity post initialization
