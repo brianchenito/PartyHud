@@ -142,7 +142,7 @@ local function customhppostinit(inst)
 	inst.customhpbadgemax = GLOBAL.net_byte(inst.GUID,"customhpbadge.max","customhpbadgedirty")
 	inst.customhpbadgedebuff = GLOBAL.net_byte(inst.GUID,"customhpbadge.debuff","customhpbadgedirty")
 	inst.customisdead=GLOBAL.net_bool(inst.GUID,"customhpbadge.isdead","ondeathdeltadirty")
-	inst.customexitdelta=GLOBAL.net_bool(inst.GUID,"customhpbadge.dctoggle","ondiconnectdirty")
+	inst.dctoggle=GLOBAL.net_bool(inst.GUID,"customhpbadge.dctoggle","ondiconnectdirty")
 
 
 	-- Server (master simulation) reacts to health and changes the net variable
